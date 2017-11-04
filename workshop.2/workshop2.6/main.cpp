@@ -12,7 +12,7 @@ struct Ball
     sf::Color color;
     sf::CircleShape shape;
     sf::Vector2f speed;
-    float deathTimer = 10;
+    float deathTimer = 10; // Время до удаления
 };
 
 // Для случайного числа
@@ -170,7 +170,7 @@ bool isDead(Ball ball)
 {
     return (ball.deathTimer <= 0);
 }
-// Проверка на окончание таймера сверху, снизу удаление шаров отживших 10 секунд
+// Проверка на окончание таймера и удаление шаров отживших 10 секунд
 void eraseDeadBall(std::vector<Ball> &balls)
 {
     auto newEnd = std::remove_if(balls.begin(), balls.end(), isDead);
