@@ -55,7 +55,7 @@ float vectorLenght(sf::Vector2f &argument)
 }
 
 // Проверка на отсутствие шаров в радиусе от нажатия мыши
-bool itNotShapeRadius(std::vector<Ball> &balls, sf::Vector2f clickPosition, const float BALL_SIZE)
+bool isNotShapeRadius(std::vector<Ball> &balls, sf::Vector2f clickPosition, const float BALL_SIZE)
 {
     bool answer = true;
     for (size_t i = 0; i < balls.size(); ++i)
@@ -71,7 +71,7 @@ bool itNotShapeRadius(std::vector<Ball> &balls, sf::Vector2f clickPosition, cons
 
 void initBall(std::vector<Ball> &balls, sf::Vector2f clickPosition, const float BALL_SIZE)
 {
-    if (itNotShapeRadius(balls, clickPosition, BALL_SIZE))
+    if (isNotShapeRadius(balls, clickPosition, BALL_SIZE))
     {
         Ball bell; // Пустая структура для заполнения нового элемента
         balls.push_back(bell);
