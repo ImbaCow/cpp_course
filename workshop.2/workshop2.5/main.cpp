@@ -54,7 +54,7 @@ float vectorLenght(sf::Vector2f &argument)
 }
 
 // Проверка на отсутствие шаров в радиусе от нажатия мыши
-bool isNotShapeRadius(std::vector<Ball> &balls, sf::Vector2f clickPosition, const float BALL_SIZE)
+bool itsNotShapeRadius(std::vector<Ball> &balls, sf::Vector2f clickPosition, const float BALL_SIZE)
 {
     bool answer = true;
     for (size_t i = 0; i < balls.size(); ++i)
@@ -70,7 +70,7 @@ bool isNotShapeRadius(std::vector<Ball> &balls, sf::Vector2f clickPosition, cons
 
 void initBall(std::vector<Ball> &balls, sf::Vector2f clickPosition, const float BALL_SIZE)
 {
-    if (isNotShapeRadius(balls, clickPosition, BALL_SIZE))
+    if (itsNotShapeRadius(balls, clickPosition, BALL_SIZE))
     {
         Ball bell; // Пустая структура для заполнения нового элемента
         balls.push_back(bell);
@@ -150,7 +150,7 @@ void speedUpdate(std::vector<Ball> &balls, size_t fi, size_t si)
 }
 
 // Проверка на столкновение шаров и обновление их скорости при его наличии
-void collisionCheck(std::vector<Ball> &balls, const float BALL_SIZE)
+void checkBallCollision(std::vector<Ball> &balls, const float BALL_SIZE)
 {
     for (size_t fi = 0; fi < balls.size(); ++fi)
     {
@@ -165,29 +165,36 @@ void collisionCheck(std::vector<Ball> &balls, const float BALL_SIZE)
     }
 }
 
-void update(const unsigned WINDOW_WIDTH, const unsigned WINDOW_HEIGHT, const float dt, const float BALL_SIZE, std::vector<Ball> &balls)
+void checkWallCollision(const unsigned WINDOW_WIDTH, const unsigned WINDOW_HEIGHT, const float BALL_SIZE, sf::Vector2f &speed, sf::Vector2f &position)
 {
-    collisionCheck(balls, BALL_SIZE);
+    if ((position.x + 2 * BALL_SIZE >= WINDOW_WIDTH) && (speed.x > 0))
+    {
+        speed.x = -speed.x;
+    }
+    if ((position.x < 0) && (speed.x < 0))
+    {
+        speed.x = -speed.x;
+    }
+    if ((position.y + 2 * BALL_SIZE >= WINDOW_HEIGHT) && (speed.y > 0))
+    {
+        speed.y = -speed.y;
+    }
+    if ((position.y < 0) && (speed.y < 0))
+    {
+        speed.y = -speed.y;
+    }
+}
+
+void update(const unsigned WINDOW_WIDTH, const unsigned WINDOW_HEIGHT, sf::Clock &clock, const float BALL_SIZE, std::vector<Ball> &balls)
+{
+    const float dt = clock.restart().asSeconds();
+    checkBallCollision(balls, BALL_SIZE);
     for (size_t i = 0; i < balls.size(); ++i)
     {
         sf::Vector2f position = balls[i].shape.getPosition();
 
-        if ((position.x + 2 * BALL_SIZE >= WINDOW_WIDTH) && (balls[i].speed.x > 0))
-        {
-            balls[i].speed.x = -balls[i].speed.x;
-        }
-        if ((position.x < 0) && (balls[i].speed.x < 0))
-        {
-            balls[i].speed.x = -balls[i].speed.x;
-        }
-        if ((position.y + 2 * BALL_SIZE >= WINDOW_HEIGHT) && (balls[i].speed.y > 0))
-        {
-            balls[i].speed.y = -balls[i].speed.y;
-        }
-        if ((position.y < 0) && (balls[i].speed.y < 0))
-        {
-            balls[i].speed.y = -balls[i].speed.y;
-        }
+        checkWallCollision(WINDOW_WIDTH, WINDOW_HEIGHT, BALL_SIZE, balls[i].speed, position);
+
         balls[i].shape.setPosition(position + balls[i].speed * dt);
     }
 }
@@ -206,8 +213,7 @@ int main()
     while (window.isOpen())
     {
         pollEvents(window, balls, BALL_SIZE);
-        const float dt = clock.restart().asSeconds();
-        update(WINDOW_WIDTH, WINDOW_HEIGHT, dt, BALL_SIZE, balls);
+        update(WINDOW_WIDTH, WINDOW_HEIGHT, clock, BALL_SIZE, balls);
         redrawFrame(window, balls);
     }
 }
