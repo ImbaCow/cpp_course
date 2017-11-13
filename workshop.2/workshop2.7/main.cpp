@@ -12,10 +12,6 @@ static const unsigned WINDOW_HEIGHT = 600;
 static const unsigned INTERACTION_COUNT = 10;
 
 // Структура для заполнения массива с шарами
-struct Col
-{
-    sf::Color color;
-};
 struct Ball
 {
     sf::CircleShape shape;
