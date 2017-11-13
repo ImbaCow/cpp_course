@@ -6,10 +6,18 @@
 #include <random>
 #include <ctime>
 
+static const float BALL_SIZE = 40;
+static const unsigned WINDOW_WIDTH = 800;
+static const unsigned WINDOW_HEIGHT = 600;
+static const unsigned INTERACTION_COUNT = 10;
+
 // Структура для заполнения массива с шарами
-struct Ball
+struct Col
 {
     sf::Color color;
+};
+struct Ball
+{
     sf::CircleShape shape;
     sf::Vector2f speed;
     float deathTimer = 10;
@@ -55,7 +63,7 @@ float vectorLenght(sf::Vector2f &argument)
 }
 
 // Проверка на отсутствие шаров в радиусе от нажатия мыши
-bool isNotShapeRadius(std::vector<Ball> &balls, sf::Vector2f clickPosition, const float BALL_SIZE)
+bool isNotShapeRadius(std::vector<Ball> &balls, sf::Vector2f clickPosition)
 {
     bool answer = true;
     for (size_t i = 0; i < balls.size(); ++i)
@@ -69,16 +77,12 @@ bool isNotShapeRadius(std::vector<Ball> &balls, sf::Vector2f clickPosition, cons
     return answer;
 }
 
-void initBall(std::vector<Ball> &balls, sf::Vector2f clickPosition, const float BALL_SIZE)
+void initBall(std::vector<Ball> &balls, sf::Vector2f clickPosition, PRNG &generator, std::vector<uint8_t> &colors)
 {
-    if (isNotShapeRadius(balls, clickPosition, BALL_SIZE))
+    if (isNotShapeRadius(balls, clickPosition))
     {
-        Ball bell; // Пустая структура для заполнения нового элемента
-        balls.push_back(bell);
-
-        PRNG generator;
-        initGenerator(generator);
-        sf::Color color;
+        Ball null; // Пустая структура для заполнения нового элемента
+        balls.push_back(null);
 
         // Инициализируем новый шар если он не находится в зоне другого шара
         size_t i = balls.size() - 1;
@@ -88,15 +92,24 @@ void initBall(std::vector<Ball> &balls, sf::Vector2f clickPosition, const float 
         float randomSpeedY = random(generator, 50, 250) * pow(-1.0, signY);
         balls[i].speed = {randomSpeedX, randomSpeedY};
         balls[i].shape.setRadius(BALL_SIZE);
-        color.r = random_color(generator);
-        color.b = random_color(generator);
-        color.g = random_color(generator);
+
+        sf::Color color;
+
+        //Выбираем две случайные строки массива для двух цветов и берем номера этих строк
+        size_t Clr1 = random(generator, 0, (colors.size() - 1) / 3);
+        size_t Clr2 = random(generator, 0, (colors.size() - 1) / 3);
+
+        //Для каждого цветового сегмента находим среднее арифм. цветов из выбранных выше строк
+        color.r = (colors[1 + Clr1 * 3] + colors[1 + Clr2 * 3]) / 2;
+        color.g = (colors[2 + Clr1 * 3] + colors[2 + Clr2 * 3]) / 2;
+        color.b = (colors[3 + Clr1 * 3] + colors[3 + Clr2 * 3]) / 2;
+
         balls[i].shape.setFillColor(color);
         balls[i].shape.setPosition({clickPosition});
     }
 }
 
-void pollEvents(sf::RenderWindow &window, std::vector<Ball> &balls, const float BALL_SIZE)
+void pollEvents(sf::RenderWindow &window, std::vector<Ball> &balls, PRNG &generator, std::vector<uint8_t> &colors)
 {
     sf::Vector2f clickPosition;
     sf::Event event;
@@ -110,7 +123,7 @@ void pollEvents(sf::RenderWindow &window, std::vector<Ball> &balls, const float 
         // Добавляем новый шар при клике мыши
         case sf::Event::MouseButtonReleased:
             clickPosition = {float(event.mouseButton.x) - BALL_SIZE / 2, float(event.mouseButton.y) - BALL_SIZE / 2};
-            initBall(balls, clickPosition, BALL_SIZE);
+            initBall(balls, clickPosition, generator, colors);
             break;
         default:
             break;
@@ -151,7 +164,7 @@ void speedUpdate(std::vector<Ball> &balls, size_t fi, size_t si)
 }
 
 // Проверка на столкновение шаров и обновление их скорости при его наличии
-void checkBallCollision(std::vector<Ball> &balls, const float BALL_SIZE)
+void checkBallCollision(std::vector<Ball> &balls)
 {
     for (size_t fi = 0; fi < balls.size(); ++fi)
     {
@@ -177,64 +190,71 @@ void eraseDeadBall(std::vector<Ball> &balls)
     balls.erase(newEnd, balls.end());
 }
 
-void checkWallCollision(const unsigned WINDOW_WIDTH, const unsigned WINDOW_HEIGHT, const float BALL_SIZE, sf::Vector2f &speed, sf::Vector2f &position)
+void checkWallCollision(std::vector<Ball> &balls)
 {
-    if ((position.x + 2 * BALL_SIZE >= WINDOW_WIDTH) && (speed.x > 0))
+    for (size_t i = 0; i < balls.size(); ++i)
     {
-        speed.x = -speed.x;
-    }
-    if ((position.x < 0) && (speed.x < 0))
-    {
-        speed.x = -speed.x;
-    }
-    if ((position.y + 2 * BALL_SIZE >= WINDOW_HEIGHT) && (speed.y > 0))
-    {
-        speed.y = -speed.y;
-    }
-    if ((position.y < 0) && (speed.y < 0))
-    {
-        speed.y = -speed.y;
+        sf::Vector2f position = balls[i].shape.getPosition();
+
+        if ((position.x + 2 * BALL_SIZE >= WINDOW_WIDTH) && (balls[i].speed.x > 0))
+        {
+            balls[i].speed.x = -balls[i].speed.x;
+        }
+        if ((position.x < 0) && (balls[i].speed.x < 0))
+        {
+            balls[i].speed.x = -balls[i].speed.x;
+        }
+        if ((position.y + 2 * BALL_SIZE >= WINDOW_HEIGHT) && (balls[i].speed.y > 0))
+        {
+            balls[i].speed.y = -balls[i].speed.y;
+        }
+        if ((position.y < 0) && (balls[i].speed.y < 0))
+        {
+            balls[i].speed.y = -balls[i].speed.y;
+        }
     }
 }
 
-void update(const unsigned WINDOW_WIDTH, const unsigned WINDOW_HEIGHT, sf::Clock &clock, const float BALL_SIZE, std::vector<Ball> &balls, const unsigned INTERACTION_COUNT)
+void update(sf::Clock &clock, std::vector<Ball> &balls)
 {
     eraseDeadBall(balls);
+    checkWallCollision(balls);
+    const float dt = (clock.restart().asSeconds()) / INTERACTION_COUNT;
 
-    for (size_t j = 0; j < INTERACTION_COUNT; ++j)
+    for (unsigned ii = 0; ii < INTERACTION_COUNT; ++ii)
     {
-        const float dt = clock.restart().asSeconds();
-        checkBallCollision(balls, BALL_SIZE);
-        for (size_t i = 0; i < balls.size(); ++i)
+        checkBallCollision(balls);
+        for (size_t bi = 0; bi < balls.size(); ++bi)
         {
-            sf::Vector2f position = balls[i].shape.getPosition();
-
-            checkWallCollision(WINDOW_WIDTH, WINDOW_HEIGHT, BALL_SIZE, balls[i].speed, position);
-
-            balls[i].shape.setPosition(position + balls[i].speed * dt);
-
-            // Вычетаем из таймера до исчезновения прошедшее время
-            balls[i].deathTimer -= dt;
+            balls[bi].shape.setPosition(balls[bi].shape.getPosition() + balls[bi].speed * dt);
+            balls[bi].deathTimer -= dt;
         }
     }
 }
 
 int main()
 {
-    constexpr float BALL_SIZE = 40;
-    constexpr unsigned WINDOW_WIDTH = 800;
-    constexpr unsigned WINDOW_HEIGHT = 600;
-    constexpr unsigned INTERACTION_COUNT = 5;
+    PRNG generator;
+    initGenerator(generator);
 
-    sf::RenderWindow window(sf::VideoMode({WINDOW_WIDTH, WINDOW_HEIGHT}), "Wave Moving Ball");
+    sf::RenderWindow window(sf::VideoMode({WINDOW_WIDTH, WINDOW_HEIGHT}), "Moving Ball");
     sf::Clock clock;
+
+    std::vector<uint8_t> colors = {
+        0, 0, 255, //Каждая строка(3 числа) это отдельный цвет
+        0, 255, 0,
+        0, 255, 255,
+        255, 0, 0,
+        255, 0, 255,
+        255, 255, 0,
+        255, 255, 255};
 
     std::vector<Ball> balls;
 
     while (window.isOpen())
     {
-        pollEvents(window, balls, BALL_SIZE);
-        update(WINDOW_WIDTH, WINDOW_HEIGHT, clock, BALL_SIZE, balls, INTERACTION_COUNT);
+        pollEvents(window, balls, generator, colors);
+        update(clock, balls);
         redrawFrame(window, balls);
     }
 }
