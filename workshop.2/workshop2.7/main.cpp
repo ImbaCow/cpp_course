@@ -11,6 +11,10 @@ static const unsigned WINDOW_WIDTH = 800;
 static const unsigned WINDOW_HEIGHT = 600;
 static const unsigned INTERACTION_COUNT = 10;
 
+struct Color
+{
+    uint8_t colors[3];
+};
 // Структура для заполнения массива с шарами
 struct Ball
 {
@@ -73,7 +77,7 @@ bool isNotShapeRadius(std::vector<Ball> &balls, sf::Vector2f clickPosition)
     return answer;
 }
 
-void initBall(std::vector<Ball> &balls, sf::Vector2f clickPosition, PRNG &generator, std::vector<uint8_t> &colors)
+void initBall(std::vector<Ball> &balls, sf::Vector2f clickPosition, PRNG &generator, std::vector<Color> &colors)
 {
     if (isNotShapeRadius(balls, clickPosition))
     {
@@ -91,21 +95,21 @@ void initBall(std::vector<Ball> &balls, sf::Vector2f clickPosition, PRNG &genera
 
         sf::Color color;
 
-        //Выбираем две случайные строки массива для двух цветов и берем номера этих строк
-        size_t Clr1 = random(generator, 0, (colors.size() - 1) / 3);
-        size_t Clr2 = random(generator, 0, (colors.size() - 1) / 3);
+        // Выбираем две случайные строки из массива и берем их номера
+        size_t Clr1 = random(generator, 0, colors.size() - 1);
+        size_t Clr2 = random(generator, 0, colors.size() - 1);
 
         //Для каждого цветового сегмента находим среднее арифм. цветов из выбранных выше строк
-        color.r = (colors[1 + Clr1 * 3] + colors[1 + Clr2 * 3]) / 2;
-        color.g = (colors[2 + Clr1 * 3] + colors[2 + Clr2 * 3]) / 2;
-        color.b = (colors[3 + Clr1 * 3] + colors[3 + Clr2 * 3]) / 2;
+        color.r = (colors[Clr1].colors[0] + colors[Clr2].colors[0]) / 2;
+        color.g = (colors[Clr1].colors[1] + colors[Clr2].colors[1]) / 2;
+        color.b = (colors[Clr1].colors[2] + colors[Clr2].colors[2]) / 2;
 
         balls[i].shape.setFillColor(color);
         balls[i].shape.setPosition({clickPosition});
     }
 }
 
-void pollEvents(sf::RenderWindow &window, std::vector<Ball> &balls, PRNG &generator, std::vector<uint8_t> &colors)
+void pollEvents(sf::RenderWindow &window, std::vector<Ball> &balls, PRNG &generator, std::vector<Color> &colors)
 {
     sf::Vector2f clickPosition;
     sf::Event event;
@@ -236,14 +240,14 @@ int main()
     sf::RenderWindow window(sf::VideoMode({WINDOW_WIDTH, WINDOW_HEIGHT}), "Moving Ball");
     sf::Clock clock;
 
-    std::vector<uint8_t> colors = {
-        0, 0, 255, //Каждая строка(3 числа) это отдельный цвет
-        0, 255, 0,
-        0, 255, 255,
-        255, 0, 0,
-        255, 0, 255,
-        255, 255, 0,
-        255, 255, 255};
+    std::vector<Color> colors = {
+        {0, 0, 255}, //Каждая строка это отдельный цвет
+        {0, 255, 0},
+        {0, 255, 255},
+        {255, 0, 0},
+        {255, 0, 255},
+        {255, 255, 0},
+        {255, 255, 255}};
 
     std::vector<Ball> balls;
 
