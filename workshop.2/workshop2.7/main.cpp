@@ -163,8 +163,6 @@ void checkBallCollision(std::vector<Ball> &balls)
     {
         for (size_t si = fi + 1; si < balls.size(); ++si)
         {
-            sf::Vector2f speedFi = balls[fi].speed;
-            sf::Vector2f speedSi = balls[si].speed;
             sf::Vector2f delta = balls[fi].shape.getPosition() - balls[si].shape.getPosition();
             if (vectorLenght(delta) <= BALL_SIZE * 2)
             {
