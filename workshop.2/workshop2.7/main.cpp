@@ -13,7 +13,7 @@ static const unsigned INTERACTION_COUNT = 10;
 
 struct Color
 {
-    uint8_t colors[3];
+    uint8_t color[3];
 };
 // Структура для заполнения массива с шарами
 struct Ball
@@ -40,13 +40,6 @@ void initGenerator(PRNG &generator)
 unsigned random(PRNG &generator, unsigned minValue, unsigned maxValue)
 {
     std::uniform_int_distribution<unsigned> distribution(minValue, maxValue);
-    return distribution(generator.engine);
-}
-
-// Для случайного значения цвета
-unsigned random_color(PRNG &generator)
-{
-    std::uniform_int_distribution<unsigned> distribution(0, 255);
     return distribution(generator.engine);
 }
 
@@ -96,13 +89,13 @@ void initBall(std::vector<Ball> &balls, sf::Vector2f clickPosition, PRNG &genera
         sf::Color color;
 
         // Выбираем две случайные строки из массива и берем их номера
-        size_t Clr1 = random(generator, 0, colors.size() - 1);
-        size_t Clr2 = random(generator, 0, colors.size() - 1);
+        size_t clr1 = random(generator, 0, colors.size() - 1);
+        size_t clr2 = random(generator, 0, colors.size() - 1);
 
         //Для каждого цветового сегмента находим среднее арифм. цветов из выбранных выше строк
-        color.r = (colors[Clr1].colors[0] + colors[Clr2].colors[0]) / 2;
-        color.g = (colors[Clr1].colors[1] + colors[Clr2].colors[1]) / 2;
-        color.b = (colors[Clr1].colors[2] + colors[Clr2].colors[2]) / 2;
+        color.r = (colors[clr1].color[0] + colors[clr2].color[0]) / 2;
+        color.g = (colors[clr1].color[1] + colors[clr2].color[1]) / 2;
+        color.b = (colors[clr1].color[2] + colors[clr2].color[2]) / 2;
 
         balls[i].shape.setFillColor(color);
         balls[i].shape.setPosition({clickPosition});
@@ -170,6 +163,8 @@ void checkBallCollision(std::vector<Ball> &balls)
     {
         for (size_t si = fi + 1; si < balls.size(); ++si)
         {
+            sf::Vector2f speedFi = balls[fi].speed;
+            sf::Vector2f speedSi = balls[si].speed;
             sf::Vector2f delta = balls[fi].shape.getPosition() - balls[si].shape.getPosition();
             if (vectorLenght(delta) <= BALL_SIZE * 2)
             {
