@@ -1,7 +1,11 @@
-#include <iostream>
 #include "main.h"
 
-void pollEvents(sf::RenderWindow &window, sf::Vertex *pointer, size_t count)
+void createWindow(sf::RenderWindow &window)
+{
+    window.create(sf::VideoMode({WINDOW_WIDTH, WINDOW_HEIGHT}), "Line");
+}
+
+void pollEvents(sf::RenderWindow &window, sf::Vertex *pointer)
 {
     sf::Event event;
     while (window.pollEvent(event))
@@ -32,7 +36,7 @@ float vectorLenght(sf::Vector2f &argument)
     return (pow((pow(argument.x, 2.0) + pow(argument.y, 2.0)), 0.5));
 }
 
-void init(sf::Vertex *pointer, size_t count)
+void init(sf::Vertex *pointer)
 {
     pointer[0].position = sf::Vector2f(400, 300);
     pointer[1].position = sf::Vector2f(400, 300);
@@ -40,7 +44,7 @@ void init(sf::Vertex *pointer, size_t count)
     pointer[1].color = sf::Color::Black;
 }
 
-void redrawFrame(sf::RenderWindow &window, sf::Vertex *pointer, size_t count)
+void redrawFrame(sf::RenderWindow &window, sf::Vertex *pointer)
 {
     window.clear(sf::Color::White);
     window.draw(pointer, 2, sf::Lines);

@@ -1,12 +1,18 @@
 #include <cmath>
 #include <SFML/Graphics.hpp>
+#include <iostream>
 
-void pollEvents(sf::RenderWindow &window, sf::Vertex *pointer, size_t count);
+static constexpr unsigned WINDOW_WIDTH = 800;
+static constexpr unsigned WINDOW_HEIGHT = 600;
+
+void pollEvents(sf::RenderWindow &window, sf::Vertex *pointer);
 
 float vectorLenght(sf::Vector2f &argument);
 
-void init(sf::Vertex *pointer, size_t count);
+void init(sf::Vertex *pointer);
 
-void redrawFrame(sf::RenderWindow &window, sf::Vertex *pointer, size_t count);
+void redrawFrame(sf::RenderWindow &window, sf::Vertex *pointer);
 
 void onMouseMove(sf::Vector2f centerPosition, sf::Vector2f mousePosition);
+
+void createWindow(sf::RenderWindow &window);
