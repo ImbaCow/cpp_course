@@ -9,7 +9,7 @@ struct Figure
     sf::ConvexShape eyeL; // Левый зрачок
     sf::ConvexShape eyeR; // Правый
     const int pointCount = 200;
-    const sf::Vector2f eyeRadius = {100, 170};
+    const sf::Vector2f eyeRadius = {33, 56};
     sf::Vector2f eyePositionL = {250, 320};
     sf::Vector2f eyePositionR = {550, 320};
 };
@@ -22,8 +22,8 @@ void init(Figure &eye, sf::ConvexShape &base)
     {
         float angle = float(2 * M_PI * pointNo) / float(eye.pointCount);
         sf::Vector2f point = sf::Vector2f{
-            eye.eyeRadius.x * std::sin(angle),
-            eye.eyeRadius.y * std::cos(angle)};
+            eye.eyeRadius.x * 3 * std::sin(angle),
+            eye.eyeRadius.y * 3 * std::cos(angle)};
         base.setPoint(pointNo, point);
     }
 
@@ -34,8 +34,8 @@ void init(Figure &eye, sf::ConvexShape &base)
     {
         float angle = float(2 * M_PI * pointNo) / float(eye.pointCount);
         sf::Vector2f point = sf::Vector2f{
-            eye.eyeRadius.x / 3 * std::sin(angle),
-            eye.eyeRadius.y / 3 * std::cos(angle)};
+            eye.eyeRadius.x * std::sin(angle),
+            eye.eyeRadius.y * std::cos(angle)};
         eye.eyeL.setPoint(pointNo, point);
     }
 
@@ -46,8 +46,8 @@ void init(Figure &eye, sf::ConvexShape &base)
     {
         float angle = float(2 * M_PI * pointNo) / float(eye.pointCount);
         sf::Vector2f point = sf::Vector2f{
-            eye.eyeRadius.x / 3 * std::sin(angle),
-            eye.eyeRadius.y / 3 * std::cos(angle)};
+            eye.eyeRadius.x * std::sin(angle),
+            eye.eyeRadius.y * std::cos(angle)};
         eye.eyeR.setPoint(pointNo, point);
     }
 }
@@ -83,11 +83,11 @@ void redrawFrame(sf::RenderWindow &window, sf::ConvexShape &base, Figure &eye)
     window.display();
 }
 
-sf::Vector2f toEuclidean(float angle, Figure &eye)
+sf::Vector2f toEuclidean(float angle, sf::Vector2f vector)
 {
     return {
-        eye.eyeRadius.x / 3 * std::cos(angle),
-        eye.eyeRadius.y / 3 * std::sin(angle)};
+        vector.x * std::cos(angle),
+        vector.y * std::sin(angle)};
 }
 
 float vectorLenght(sf::Vector2f &argument)
@@ -99,10 +99,12 @@ void update(sf::Vector2f &mousePosition, Figure &eye)
 {
     sf::Vector2f delta = mousePosition - eye.eyePositionL;
     float eyeRotation = atan2(delta.y, delta.x);
-    sf::Vector2f eyeOffset = toEuclidean(eyeRotation, eye);
+    sf::Vector2f eyeOffset = toEuclidean(eyeRotation, eye.eyeRadius);
+    float nom = vectorLenght(delta) / vectorLenght(eyeOffset);                // Коэффициент отношения длины вектора позиции мыши к длине позиции глаза
+    sf::Vector2f mouseOffset = toEuclidean(eyeRotation, eye.eyeRadius * nom); //
     if (vectorLenght(eyeOffset) >= vectorLenght(delta))
     {
-        eye.eyeL.setPosition(mousePosition);
+        eye.eyeL.setPosition(eye.eyePositionL + mouseOffset);
     }
     else
     {
@@ -111,10 +113,12 @@ void update(sf::Vector2f &mousePosition, Figure &eye)
 
     delta = mousePosition - eye.eyePositionR;
     eyeRotation = atan2(delta.y, delta.x);
-    eyeOffset = toEuclidean(eyeRotation, eye);
+    eyeOffset = toEuclidean(eyeRotation, eye.eyeRadius);
+    nom = vectorLenght(delta) / vectorLenght(eyeOffset);
+    mouseOffset = toEuclidean(eyeRotation, eye.eyeRadius * nom);
     if (vectorLenght(eyeOffset) >= vectorLenght(delta))
     {
-        eye.eyeR.setPosition(mousePosition);
+        eye.eyeR.setPosition(eye.eyePositionR + mouseOffset);
     }
     else
     {
