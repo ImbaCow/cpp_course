@@ -101,11 +101,11 @@ void update(sf::Vector2f &mousePosition, Figure &eye)
     float eyeRotation = atan2(delta.y, delta.x);
     sf::Vector2f eyeOffset = toEuclidean(eyeRotation, eye.eyeRadius);
     float nom = vectorLenght(delta) / vectorLenght(eyeOffset);                // Коэффициент отношения длины вектора позиции мыши к длине позиции глаза
-    sf::Vector2f mouseOffset = toEuclidean(eyeRotation, eye.eyeRadius * nom); //
+    sf::Vector2f mouseOffset = toEuclidean(eyeRotation, eye.eyeRadius * nom); // Овал находящийся в той же точке, но больше овала траектории глаза в nom раз
     if (vectorLenght(eyeOffset) >= vectorLenght(delta))
     {
-        eye.eyeL.setPosition(eye.eyePositionL + mouseOffset);
-    }
+        eye.eyeL.setPosition(eye.eyePositionL + mouseOffset); // Если вектор позиции мыши короче вектора позиции зрачка, заменяем овал траектории зрачка на
+    }                                                         // овал c радиусом завищясим от позиции мыши
     else
     {
         eye.eyeL.setPosition(eye.eyePositionL + eyeOffset);
