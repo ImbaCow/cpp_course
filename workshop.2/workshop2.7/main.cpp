@@ -36,18 +36,18 @@ void initGenerator(PRNG &generator)
     generator.engine.seed(seed);
 }
 
-// Для случайного числа, в данной программе для скорости
+// Для случайного числа
 unsigned random(PRNG &generator, unsigned minValue, unsigned maxValue)
 {
     std::uniform_int_distribution<unsigned> distribution(minValue, maxValue);
     return distribution(generator.engine);
 }
 
-//Для степени (-1) для получения случайного направления скорости
-unsigned random_sign(PRNG &generator)
+// Случайно возвращает либо отрицательный множитель, либо положительный
+float random_multiplier(PRNG &generator)
 {
     std::uniform_int_distribution<unsigned> distribution(0, 1);
-    return distribution(generator.engine);
+    return pow(-1.0, distribution(generator.engine));
 }
 
 float vectorLenght(sf::Vector2f &argument)
@@ -79,10 +79,10 @@ void initBall(std::vector<Ball> &balls, sf::Vector2f clickPosition, PRNG &genera
 
         // Инициализируем новый шар если он не находится в зоне другого шара
         size_t i = balls.size() - 1;
-        float signX = random_sign(generator);
-        float signY = random_sign(generator);
-        float randomSpeedX = random(generator, 50, 250) * pow(-1.0, signX);
-        float randomSpeedY = random(generator, 50, 250) * pow(-1.0, signY);
+        float multiplierX = random_multiplier(generator);
+        float multiplierY = random_multiplier(generator);
+        float randomSpeedX = random(generator, 50, 250) * multiplierX;
+        float randomSpeedY = random(generator, 50, 250) * multiplierY;
         balls[i].speed = {randomSpeedX, randomSpeedY};
         balls[i].shape.setRadius(BALL_SIZE);
 
