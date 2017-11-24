@@ -1,11 +1,11 @@
-#include "main.hpp"
+#include "eventloop.h"
 
 int main()
 {
     sf::RenderWindow window;
     createWindow(window);
 
-    sf::Vertex pointer[2];
+    Line pointer;
     init(pointer);
 
     while (window.isOpen())

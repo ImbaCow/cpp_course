@@ -1,4 +1,4 @@
-add_executable(workshop3.3 main.cpp)
+add_executable(workshop3.3 main.cpp eventloop.cpp)
 
 set(SFML_STATIC_LIBRARIES TRUE)
 
