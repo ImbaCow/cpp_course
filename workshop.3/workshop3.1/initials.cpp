@@ -13,7 +13,7 @@ void initials::init()
 
     initialsText.setFont(font);
     initialsText.setString(INITIALS_TEXT);
-    initialsText.setCharacterSize(charSize);
+    initialsText.setCharacterSize(INITIALS_SIZE);
     textBox = initialsText.getGlobalBounds();
     initialsText.setOrigin({textBox.width / 2, textBox.height / 2});
     initialsText.setPosition(position);
