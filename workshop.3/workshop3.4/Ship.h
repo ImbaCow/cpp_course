@@ -18,7 +18,7 @@ private:
   sf::Vector2f boostDirection;
   float rotationSum = 0;
 
-  sf::Transform transform;
+  sf::Transform transform; // Для разворота координат вершин коробля
 
 public:
   void init();
