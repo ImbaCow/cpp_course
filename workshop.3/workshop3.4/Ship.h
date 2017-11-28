@@ -6,8 +6,8 @@ class Ship : public sf::Drawable
 private:
   void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 
-  void checkWallCollision();
-
+  void checkWallCollision(); // Чтобы не терять корабль за пределами экрана, перемещаем корабль 
+                             // при прохождении через край окна на противоположный конец
   sf::Vertex ship[5];
   sf::Vertex shipBoost[5];
 
