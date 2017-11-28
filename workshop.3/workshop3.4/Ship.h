@@ -14,7 +14,7 @@ private:
   float rotation = 0;
   sf::Vector2f speed = sf::Vector2f(0, 0);
   sf::Vector2f position = START_POSITION;
-  sf::Vector2f direction = sf::Vector2f(0, 0);
+  sf::Vector2f direction = sf::Vector2f(0, 0); // Кордината х отвечает за поворот, у - за движение вперед
   sf::Vector2f boostDirection;
   float rotationSum = 0;
 
