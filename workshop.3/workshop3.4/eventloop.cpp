@@ -7,7 +7,7 @@ void createWindow(sf::RenderWindow &window)
     sf::ContextSettings settings;
     settings.antialiasingLevel = 8;
     window.create(videoMode, title, sf::Style::Default, settings);
-    window.setKeyRepeatEnabled(false);
+    window.setKeyRepeatEnabled(false); // Отключаем повторение ивента нажатия клавиши при длительном ее удержании
 }
 
 void pollEvents(sf::RenderWindow &window, Ship &ship)
