@@ -1,5 +1,5 @@
 #include "eventloop.h"
-#include "initials.h"
+#include "Initials.h"
 
 int main()
 {
@@ -7,7 +7,7 @@ int main()
     createWindow(window);
     sf::Clock clock;
 
-    initials initial;
+    Initials initial;
     initial.init();
 
     while (window.isOpen())
