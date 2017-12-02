@@ -2,7 +2,7 @@
 
 void Initials::init()
 {
-    font.loadFromFile("./workshop3.1/arial.ttf");
+    font.loadFromFile("./arial.ttf");
 
     initialsBackground.setRadius(BALL_RADIUS);
     initialsBackground.setOrigin({BALL_RADIUS, BALL_RADIUS});
