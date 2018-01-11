@@ -25,7 +25,7 @@ static const float ROTAION_SPEED = 150;
 static const unsigned MAX_HEALTH = 100;
 
 static const float HERO_BLAST_COUNT = 40;
-static const float HERO_BLAST_COOLDOWN = 15;
+static const float HERO_BLAST_COOLDOWN = 20;
 
 static const float SHOT_COOLDOWN = 0.4;
 static const float HERO_BULLET_DMG = 1;
