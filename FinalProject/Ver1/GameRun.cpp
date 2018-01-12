@@ -174,7 +174,7 @@ void GameRun::checkWin(unsigned &GameStatus, sf::Vector2f &enemiesCount)
         }
         else
         {
-            float scoreMp = heroTank.healthPoints / MAX_HEALTH * 10;
+            float scoreMp = 1.f + (heroTank.healthPoints / MAX_HEALTH * 10);
             isWin = 1;
             score *= scoreMp;
             GameStatus = 2;
