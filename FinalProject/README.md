@@ -4,4 +4,6 @@ Mouse - head control
 
 Left mouse button - shot 
 
-L.Ctrl - blast 
+R.Ctrl - blast 
+
+Esc - pause
